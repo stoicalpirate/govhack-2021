@@ -9,7 +9,8 @@
       "methods": [
         "get",
         "post"
-      ]
+      ],
+      "route": "message/{subpath}"
     },
     {
       "type": "http",

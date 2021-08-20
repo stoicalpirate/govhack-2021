@@ -16,9 +16,11 @@
     "babel": "^6.23.0",
     "bootstrap": "^5.1.0",
     "bootstrap-vue": "^2.21.2",
+    "plotly.js-dist": "^2.3.1",
     "vue": "^2.6.14",
     "vue-router": "^3.5.2",
     "vue-template-compiler": "^2.6.11",
+    "vuewordcloud": "^18.7.12",
     "vuex": "^3.6.2"
   },
   "devDependencies": {

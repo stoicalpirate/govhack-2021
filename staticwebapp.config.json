@@ -1,68 +1,73 @@
 {
-    "routes": [
-      {
-        "route": "/profile",
-        "allowedRoles": ["authenticated"]
-      },
-      {
-        "route": "/admin/*",
-        "allowedRoles": ["administrator"]
-      },
-      {
-        "route": "/api/*",
-        "methods": ["GET", "POST"],
-        "allowedRoles": ["authenticated"]
-      },
-      {
-        "route": "/api/*",
-        "methods": ["PUT", "PATCH", "DELETE"],
-        "allowedRoles": ["administrator"]
-      },
-      {
-        "route": "/api/*",
-        "allowedRoles": ["authenticated"]
-      },
-      {
-        "route": "/login",
-        "rewrite": "/.auth/login/aadb2c"
-      },
-      {
-        "route": "/logout",
-        "redirect": "https://phishquizprod.b2clogin.com/phishquizprod.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/logout?post_logout_redirect_uri=https://proud-smoke-07aa93310.azurestaticapps.net/.auth/logout"
-      }
-    ],
-    "navigationFallback": {
-      "rewrite": "index.html",
-      "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+  "routes": [
+    {
+      "route": "/profile",
+      "allowedRoles": ["authenticated"]
     },
-    "responseOverrides": {
-      "401": {
-        "statusCode": 302,
-        "redirect": "/login"
-      }
+    {
+      "route": "/admin/*",
+      "allowedRoles": ["administrator"]
     },
-    "mimeTypes": {
-      ".json": "text/json"
-    },    
-    "auth": {
-      "identityProviders": {
-        "customOpenIdConnectProviders": {
-          "aadb2c": {
-            "registration": {
-              "clientIdSettingName": "AADB2C_ID",
-              "clientCredential": {
-                "clientSecretSettingName": "AADB2C_SECRET"
-              },
-              "openIdConnectConfiguration": {
-                "wellKnownOpenIdConfiguration": "https://phishquizprod.b2clogin.com/phishquizprod.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_signupsignin1"
-              }
+    {
+      "route": "/api/message/chartdata",
+      "methods": ["GET"],
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/api/*",
+      "methods": ["GET", "POST"],
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/*",
+      "methods": ["PUT", "PATCH", "DELETE"],
+      "allowedRoles": ["administrator"]
+    },
+    {
+      "route": "/api/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/login",
+      "rewrite": "/.auth/login/aadb2c"
+    },
+    {
+      "route": "/logout",
+      "redirect": "https://govhack2021smrt.b2clogin.com/govhack2021smrt.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/logout/post_logout_redirect=https://blue-meadow-0dcc57a10.azurestaticapps.net/.auth/logout"
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "index.html",
+    "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+  },
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/login"
+    }
+  },
+  "mimeTypes": {
+    ".json": "text/json"
+  },    
+  "auth": {
+    "identityProviders": {
+      "customOpenIdConnectProviders": {
+        "aadb2c": {
+          "registration": {
+            "clientIdSettingName": "AADB2C_ID",
+            "clientCredential": {
+              "clientSecretSettingName": "AADB2C_SECRET"
             },
-            "login": {
-              "nameClaimType": "emails",
-              "scopes": ["openid", "profile"]
+            "openIdConnectConfiguration": {
+              "wellKnownOpenIdConfiguration": "https://govhack2021smrt.b2clogin.com/govhack2021smrt.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_signupsignin1"
             }
+          },
+          "login": {
+            "nameClaimType": "emails",
+            "scopes": ["openid", "profile"]
           }
         }
       }
     }
   }
+}
