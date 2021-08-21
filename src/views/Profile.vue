@@ -13,34 +13,46 @@
 
       <div v-else >
 
-        <div class="my-5">
+        <div v-if="topicDataReceived" class="my-5">
           <h4>Here are the topics and people you're currently tracking:</h4>
           <b-row>
-            <b-col cols="4">
-              <TopicList v-if="topicDataReceived" :sourceData="selectedTopicsData" @topicselected="setDisplayTopic"/>
-              <Loading v-if="!topicDataReceived" />
+            <b-col cols="2">
+              <TopicList :sourceData="selectedTopicsData" @topicselected="setDisplayTopic"/>
             </b-col>
             <b-col>
-              <b-row>
-                <b-col>
-                  <div v-if="topicDataReceived">
-                    <div v-for="topic in selectedTopicsData" :key="topic.name">
-                      <LineChart v-if="topic.name == displayTopic" :sourceData="[topic.federal_trend]"/>   
-                    </div>
-                  </div>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>Key speakers...</b-col>
-                <b-col>Ranking in your electorate...</b-col>
-                <b-col>Your MP on this issue...</b-col>
-              </b-row>
-              <b-row>
-                <b-col>Datasets...</b-col>
-              </b-row>
+              <div v-for="topic in selectedTopicsData" :key="topic.name">
+                <div v-if="topic.name == displayTopic">
+                  <b-row>
+                    <b-col>  
+                      <LineChart :sourceData="[topic.federal_trend]"/>   
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col>
+                      <h6>Most active politicans</h6>
+                      <ul>
+                        <li v-for="speaker in topic.active_speakers" :key=speaker>{{speaker}}</li>
+                      </ul>
+                    </b-col>
+                    <b-col>
+                      <h6>Ranking in your electorate</h6>
+                      <p>{{topic.ranking_by_electorate['User Electorate']}}</p>
+                    </b-col>
+                    <b-col>
+                      <h6>Your local MP on this issue</h6>
+                      <p>{{topic.local_member}}</p>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <h6>Datasets</h6>
+                    <p v-for="dataset in topic.datasets" :key="dataset.name">{{dataset.name}} - {{dataset.reference}}</p>
+                  </b-row>
+                </div>
+              </div>
             </b-col>
           </b-row>
         </div>
+        <Loading v-if="!topicDataReceived" />
 
         <div class="my-5">
           <h4>Here are some other things you might like to track:</h4>
@@ -153,7 +165,7 @@ export default {
     async userFollowTopic(topic) {
       this.userFollowTopicLoading = true
       const formData = new FormData()
-      formData.append("selected_topic", topic)
+      formData.append("selected_topic", topic.name)
       this.$http
         .post("/api/user/followtopic", formData, {
           headers: {

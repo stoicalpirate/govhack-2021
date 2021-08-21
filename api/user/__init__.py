@@ -192,7 +192,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         # TODO: update database...
 
-        body = json.dumps({"text": f"You are now following {topic['name']}."})
+        body = json.dumps({"text": f"You are now following {topic}."})
 
     elif subpath == "newtopic":
 
