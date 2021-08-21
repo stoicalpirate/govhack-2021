@@ -5,6 +5,24 @@
       <h1>This is the Home page!</h1>
       <br><br>
 
+      <StackedBarChart v-if="chartDataReceived" :sourceData="topicflowData"/>
+      <Loading v-if="!chartDataReceived" />
+
+      <br><br>
+
+      <WordCloud v-if="chartDataReceived" :sourceData="wordcloudData"/>
+      <Loading v-if="!chartDataReceived" />
+
+      <br><br>
+
+      <HorizontalBarChart v-if="chartDataReceived" :sourceData="speakertimeData"/>
+      <Loading v-if="!chartDataReceived" />
+
+      <br><br>
+
+
+      <br><br>
+
       <h3 class="mb-2">Ping the API to check that it's functional:</h3>
       <b-button variant="success" @click="basicApiCall" class="my-2">Ping API</b-button>
       <br>
@@ -83,12 +101,22 @@
 
 <script>
 import Layout from '../layouts/MainLayout'
+import Loading from '../components/Loading.vue'
+import StackedBarChart from '../components/StackedBarChart.vue'
+import WordCloud from '../components/WordCloud.vue'
+import HorizontalBarChart from '../components/HorizontalBarChart.vue'
 
 export default {
   page: {
     title: "Home",
   },
-  components: { Layout },
+  components: {
+    Layout,
+    Loading,
+    StackedBarChart,
+    WordCloud,
+    HorizontalBarChart
+  },
   data() {
     return {
       message: "",
@@ -97,7 +125,11 @@ export default {
       dbUserRecord: {},
       keyData: "",
       valueData: "",
-      upsertLoading: false
+      upsertLoading: false,
+      chartDataReceived: false,
+      topicflowData: {},
+      wordcloudData: {},
+      speakertimeData: {}
     };
   },
   computed: {
@@ -123,12 +155,15 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getChartData()
+  },
   methods: {
     async basicApiCall() {
       if (!this.$store.state.loggedIn) {
         this.message = "failed! Are you logged in?"
       } else {
-        const { text } = await (await fetch("/api/message")).json()
+        const { text } = await (await fetch("/api/message/ping")).json()
         this.message = text
       }
     },
@@ -175,6 +210,20 @@ export default {
         })
       }
     },
+    async getChartData() {
+      this.$http
+        .get("/api/message/chartdata")
+        .then((response) => {
+          this.topicflowData = response.data.topicflow
+          this.wordcloudData = response.data.wordcloud
+          this.speakertimeData = response.data.speakertime
+          this.chartDataReceived = true
+        })
+        .catch((error) => {
+          console.log(error)
+          this.chartDataReceived = true
+        })
+    }
   }
 };
 </script>
