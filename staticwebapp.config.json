@@ -33,7 +33,7 @@
     },
     {
       "route": "/logout",
-      "redirect": "https://phishquizprod.b2clogin.com/phishquizprod.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/logout/post_logout_redirect=https://agreeable-tree-017834410.azurestaticapps.net/.auth/logout"
+      "redirect": "https://govhack2021smrt.b2clogin.com/govhack2021smrt.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/logout/post_logout_redirect=https://agreeable-tree-017834410.azurestaticapps.net/.auth/logout"
     }
   ],
   "navigationFallback": {
@@ -59,7 +59,7 @@
               "clientSecretSettingName": "AADB2C_SECRET"
             },
             "openIdConnectConfiguration": {
-              "wellKnownOpenIdConfiguration": "https://phishquizprod.b2clogin.com/phishquizprod.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_signupsignin1"
+              "wellKnownOpenIdConfiguration": "https://govhack2021smrt.b2clogin.com/govhack2021smrt.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_signupsignin1"
             }
           },
           "login": {
