@@ -71,10 +71,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     elif subpath == "topicdata":
 
+        # 1. Pull JSON object from db
+        # 2. Make call to theyvoteforyou.org to populate politician info
+        # 3. Send to frontend
+
         db_object = {
             "selected_topics": [
                 {
                     "name": "environment",
+                    "federal_trend": {
+                        "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-9", "2021-08-10", "2021-08-11", "2021-08-12"],
+                        "y": [12, 23, 19, 8, 7, 2, 9]
+                    },
+                    "state_trend": {
+                        "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-10", "2021-08-11", "2021-08-12"],
+                        "y": [4, 18, 3, 5, 7, 2]
+                    },
                     "active_speakers": ["Politician A", "Politician B", "Politician C"],
                     "followers_by_electorate": {
                         "User Electorate": 279
@@ -96,6 +108,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 },
                 {
                     "name": "homelessness",
+                    "federal_trend": {
+                        "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-9", "2021-08-10", "2021-08-11", "2021-08-12"],
+                        "y": [0, 0, 4, 0, 1, 0, 3]
+                    },
+                    "state_trend": {
+                        "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-10", "2021-08-11", "2021-08-12"],
+                        "y": [0, 9, 1, 0, 0, 2]
+                    },
                     "active_speakers": ["Politician B", "Politician D"],
                     "followers_by_electorate": {
                         "User Electorate": 218

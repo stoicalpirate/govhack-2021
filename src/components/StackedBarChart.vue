@@ -16,15 +16,12 @@ export default {
   name: "StackedBarChart",
   props: ['sourceData'],
   computed: {
-    editedSourceData() {
+    //editedSourceData() {
       // Trying to dynamically add the "type": "bar" aspect rather than needing it in API data
-      const updated = this.sourceData
-      updated.forEach(element => element.push({"foo": "bar"}))
-      console.log(updated)
-      return {
-        updated
-      }
-    },
+      //const updated = this.sourceData
+      //updated.forEach((element) => element.type = "bar" )
+      //return { updated }
+    //},
     layout() {
       return {
         barmode: 'relative',
@@ -33,6 +30,8 @@ export default {
     }
   },
   mounted() {
+    //const data = this.editedSourceData
+    //console.log(data)
     // Plot the chart  
     Plotly.react(this.$refs.plot1, this.sourceData, this.layout);
     // Scroll to far right
