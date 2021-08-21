@@ -21,8 +21,8 @@ export default {
   name: "TopicList",
   props: ['sourceData'],
   mounted() {
-    // Select the first item in the topic list to emit to parent
-    console.log(this.sourceData)
+    // Select the first item in the topic list to emit to parent ??
+    
   },
   methods: {
     selectTopic(topic) {

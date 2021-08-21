@@ -16,6 +16,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # Read the auth header from frontend
     #auth_header = req.headers.get("x-ms-client-principal", None)
     #decoded = json.loads(base64.b64decode(auth_header).decode("utf-8"))
+    decoded = {  # TODO: delete after testing! Get from Azure AD B2C (above)
+        "identityProvider": "aadb2c",
+        "userId": "d75b260a64504067bfc5b2905e3b8182",
+        "userDetails": "username",
+        "userRoles": ["anonymous", "authenticated"]
+        }
 
     subpath = req.route_params.get("subpath")
 
@@ -72,7 +78,26 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     elif subpath == "topicdata":
 
         # 1. Pull JSON object from db
-        # 2. Make call to theyvoteforyou.org to populate politician info
+
+        """
+        # Initialise the connection to Cosmos DB
+        client = CosmosClient(url, credential=key)
+        database = client.get_database_client(database_name)
+        container_name = "users"
+        container = database.get_container_client(container_name)
+
+        try:
+            # Try to retrieve the user object
+            item = container.read_item(
+                item=decoded["userId"],
+                partition_key=decoded["userId"],
+                )
+        except CosmosHttpResponseError:
+            # Return an error response if the user cannot be found
+            return func.HttpResponse("Data not found", status_code=400)
+        """
+        # 2. Make API calls to enrich the data
+
         # 3. Send to frontend
 
         db_object = {
@@ -81,11 +106,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "name": "environment",
                     "federal_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-9", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [12, 23, 19, 8, 7, 2, 9]
+                        "y": [12, 23, 19, 8, 7, 2, 9],
+                        "type": "scatter"
                     },
                     "state_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [4, 18, 3, 5, 7, 2]
+                        "y": [4, 18, 3, 5, 7, 2],
+                        "type": "scatter"
                     },
                     "active_speakers": ["Politician A", "Politician B", "Politician C"],
                     "followers_by_electorate": {
@@ -110,11 +137,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "name": "homelessness",
                     "federal_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-9", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [0, 0, 4, 0, 1, 0, 3]
+                        "y": [0, 0, 4, 0, 1, 0, 3],
+                        "type": "scatter"
                     },
                     "state_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [0, 9, 1, 0, 0, 2]
+                        "y": [0, 9, 1, 0, 0, 2],
+                        "type": "scatter"
                     },
                     "active_speakers": ["Politician B", "Politician D"],
                     "followers_by_electorate": {
@@ -164,5 +193,20 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # TODO: update database...
 
         body = json.dumps({"text": f"You are now following {topic['name']}."})
+
+    elif subpath == "newtopic":
+
+        # Read the form data submitted from the frontend
+        data = dict(req.form)
+        
+        if len(data) == 0:
+            # Return an error response if there is no data
+            return func.HttpResponse("Form not found", status_code=400)
+        else:
+            new_topic = data["new_topic"]
+
+        # TODO: update database...
+
+        body = json.dumps({"text": f"You have suggested {new_topic}."})
 
     return func.HttpResponse(body=body)
