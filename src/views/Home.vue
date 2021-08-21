@@ -160,12 +160,12 @@ export default {
   },
   methods: {
     async basicApiCall() {
-      //if (!this.$store.state.loggedIn) {
-      //  this.message = "failed! Are you logged in?"
-      //} else {
-      const { text } = await (await fetch("/api/message/ping")).json()
-      this.message = text
-      //}
+      if (!this.$store.state.loggedIn) {
+        this.message = "failed! Are you logged in?"
+      } else {
+        const { text } = await (await fetch("/api/message/ping")).json()
+        this.message = text
+      }
     },
     async getUserInfo() {
       const response = await fetch('/.auth/me');
