@@ -1,9 +1,9 @@
 <template>
   <div>
 
-    <div v-for="topic in sourceData" :key="topic">
+    <div v-for="topic in sourceData" :key="topic.name">
 
-        <b-button variant="primary" class="my-2" @click="selectTopic(topic)">{{topic}}</b-button>
+        <b-button variant="primary" class="my-2" @click="selectTopic(topic)">{{topic.name}}</b-button>
 
     </div>
 

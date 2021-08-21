@@ -72,8 +72,61 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     elif subpath == "topicdata":
 
         db_object = {
-            "selected_topics": ["environment", "homelessness"],
-            "unselected_topics": ["covid", "domestic violence", "mental health"]
+            "selected_topics": [
+                {
+                    "name": "environment",
+                    "active_speakers": ["Politician A", "Politician B", "Politician C"],
+                    "followers_by_electorate": {
+                        "User Electorate": 279
+                    },
+                    "ranking_by_electorate": {
+                        "User Electorate": 4
+                    },
+                    "local_member": "Info on the local member's engagement with this topic...",
+                    "datasets": [
+                        {
+                            "name": "ABS Census Data",
+                            "reference": "url..."
+                        },
+                        {
+                            "name": "State Government Report 2020",
+                            "reference": "url..."
+                        }
+                    ] 
+                },
+                {
+                    "name": "homelessness",
+                    "active_speakers": ["Politician B", "Politician D"],
+                    "followers_by_electorate": {
+                        "User Electorate": 218
+                    },
+                    "ranking_by_electorate": {
+                        "User Electorate": 6
+                    },
+                    "local_member": "Info on the local member's engagement with this topic...",
+                    "datasets": [
+                        {
+                            "name": "ABS Census Data",
+                            "reference": "url..."
+                        },
+                        {
+                            "name": "State Government Report 2020",
+                            "reference": "url..."
+                        }
+                    ] 
+                },
+            ],
+            "unselected_topics": [
+                {
+                    "name": "covid"
+                },
+                {
+                    "name": "domestic violence"
+                },
+                {
+                    "name": "mental health"
+                }
+            ]
         }
         body = json.dumps(db_object)
 
@@ -90,6 +143,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         # TODO: update database...
 
-        body = json.dumps({"text": f"You are now following {topic}."})
+        body = json.dumps({"text": f"You are now following {topic['name']}."})
 
     return func.HttpResponse(body=body)

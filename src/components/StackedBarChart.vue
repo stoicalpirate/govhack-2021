@@ -16,6 +16,15 @@ export default {
   name: "StackedBarChart",
   props: ['sourceData'],
   computed: {
+    editedSourceData() {
+      // Trying to dynamically add the "type": "bar" aspect rather than needing it in API data
+      const updated = this.sourceData
+      updated.forEach(element => element.push({"foo": "bar"}))
+      console.log(updated)
+      return {
+        updated
+      }
+    },
     layout() {
       return {
         barmode: 'relative',
