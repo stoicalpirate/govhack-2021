@@ -9,8 +9,8 @@
       "allowedRoles": ["administrator"]
     },
     {
-      "route": "/api/message/chartdata",
-      "methods": ["GET"],
+      "route": "/api/message/*",
+      "methods": ["GET", "POST"],
       "allowedRoles": ["anonymous"]
     },
     {
