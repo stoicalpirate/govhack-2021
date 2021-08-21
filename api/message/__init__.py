@@ -1,4 +1,5 @@
 import logging
+import os
 
 import azure.functions as func
 import json
@@ -70,7 +71,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     },
                     "orientation": "h"
                     }
-            ]
+            ],
+            "databasename": os.environ["COSMOSDB_DATABASE"]
         }
         body = json.dumps(db_object)
 
