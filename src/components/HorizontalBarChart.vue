@@ -16,9 +16,19 @@ NOTES:
 export default {
   name: "HorizontalBarChart",
   props: ['sourceData'],
+  computed: {
+    editedSourceData() {
+      // Dynamically add the "type": "bar", "orientation": "h"
+      const updated = this.sourceData
+      updated.forEach((element) => element.type = "bar" )
+      updated.forEach((element) => element.orientation = "h" )
+      return updated
+    }
+  },
   mounted() {
+    const data = this.editedSourceData
     // Plot the chart
-    Plotly.react(this.$refs.plot1, this.sourceData, this.layout);
+    Plotly.react(this.$refs.plot1, data, this.layout);
   }
 }
 </script>

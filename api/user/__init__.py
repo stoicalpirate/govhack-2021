@@ -78,20 +78,26 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     elif subpath == "topicdata":
 
         # 1. Pull JSON object from db
-
         """
         # Initialise the connection to Cosmos DB
         client = CosmosClient(url, credential=key)
         database = client.get_database_client(database_name)
-        container_name = "users"
+        container_name = "topics"
         container = database.get_container_client(container_name)
 
         try:
+            items = container.query_items(
+                query="SELECT * FROM topics WHERE ARRAY_CONTAINS(['environment', 'homelessness'], )",
+                #parameters=[dict(name="@usertopics", value="['environment', 'homelessness']")],
+            )
+            for item in items:
+                i = (json.dumps(item, indent=True))
+
             # Try to retrieve the user object
-            item = container.read_item(
-                item=decoded["userId"],
-                partition_key=decoded["userId"],
-                )
+            #item = container.read_item(
+            #    item=decoded["userId"],
+            #    partition_key=decoded["userId"],
+            #    )
         except CosmosHttpResponseError:
             # Return an error response if the user cannot be found
             return func.HttpResponse("Data not found", status_code=400)
@@ -106,20 +112,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "name": "environment",
                     "federal_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-9", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [12, 23, 19, 8, 7, 2, 9],
-                        "type": "scatter"
+                        "y": [12, 23, 19, 8, 7, 2, 9]
                     },
                     "state_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [4, 18, 3, 5, 7, 2],
-                        "type": "scatter"
+                        "y": [4, 18, 3, 5, 7, 2]
                     },
                     "active_speakers": ["Politician A", "Politician B", "Politician C"],
                     "followers_by_electorate": {
-                        "User Electorate": 279
+                        "Fremantle": 279
                     },
                     "ranking_by_electorate": {
-                        "User Electorate": 4
+                        "Fremantle": 4
                     },
                     "local_member": "Info on the local member's engagement with this topic...",
                     "datasets": [
@@ -137,20 +141,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "name": "homelessness",
                     "federal_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-9", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [0, 0, 4, 0, 1, 0, 3],
-                        "type": "scatter"
+                        "y": [0, 0, 4, 0, 1, 0, 3]
                     },
                     "state_trend": {
                         "x": ["2021-08-3", "2021-08-4", "2021-08-5", "2021-08-10", "2021-08-11", "2021-08-12"],
-                        "y": [0, 9, 1, 0, 0, 2],
-                        "type": "scatter"
+                        "y": [0, 9, 1, 0, 0, 2]
                     },
                     "active_speakers": ["Politician B", "Politician D"],
                     "followers_by_electorate": {
-                        "User Electorate": 218
+                        "Fremantle": 218
                     },
                     "ranking_by_electorate": {
-                        "User Electorate": 6
+                        "Fremantle": 6
                     },
                     "local_member": "Info on the local member's engagement with this topic...",
                     "datasets": [
@@ -205,8 +207,29 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             new_topic = data["new_topic"]
 
-        # TODO: update database...
+        # Initialise the connection to Cosmos DB
+        client = CosmosClient(url, credential=key)
+        database = client.get_database_client(database_name)
+        container_name = "topics"
+        container = database.get_container_client(container_name)
 
-        body = json.dumps({"text": f"You have suggested {new_topic}."})
+        # Insert into the database if it doesn't already exist
+        try:
+            # Try to retrieve the user object
+            item = container.read_item(
+                item=new_topic,
+                partition_key=new_topic,
+                )
+            logging.info("Item already exists")
+        except CosmosHttpResponseError:
+            # Create a new user object
+            logging.info("Topic does not yet exist. Creating new topic.")
+            item = {}
+            item["name"] = new_topic  # id = Azure AD B2C id
+            updated_item = container.upsert_item(item)
+
+        body = json.dumps({"text": (
+            f"Thank you for suggesting {new_topic} as a new topic.")
+        })
 
     return func.HttpResponse(body=body)

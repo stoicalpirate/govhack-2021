@@ -36,7 +36,7 @@
                     </b-col>
                     <b-col>
                       <h6>Ranking in your electorate</h6>
-                      <p>{{topic.ranking_by_electorate['User Electorate']}}</p>
+                      <p>{{topic.ranking_by_electorate['Fremantle']}}</p>
                     </b-col>
                     <b-col>
                       <h6>Your local MP on this issue</h6>
@@ -193,6 +193,7 @@ export default {
         })
         .then(() => {
           this.upsertNewtopicLoading = false
+          this.newtopic = ""
         })
         .catch((error) => {
           console.log(error)

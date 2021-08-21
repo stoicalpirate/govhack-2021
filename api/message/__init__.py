@@ -21,26 +21,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 {
                     "x": ["14:21", "14:22", "14:23", "14:24", "14:25", "14:26", "14:27", "14:28", "14:29"],
                     "y": [20, 14, 23, 24, 30, 32, 30, 28, 27],
-                    "name": "jobkeeper",
-                    "type": "bar"
+                    "name": "jobkeeper"
                 },
                 {
                     "x": ["14:21", "14:22", "14:23", "14:24", "14:25", "14:26", "14:27", "14:28", "14:29"],
                     "y": [32, 18, 29, 35, 28, 21, 29, 18, 15],
-                    "name": "fruit farming",
-                    "type": "bar"
+                    "name": "fruit farming"
                 },
                 {
                     "x": ["14:21", "14:22", "14:23", "14:24", "14:25", "14:26", "14:27", "14:28", "14:29"],
                     "y": [0, 0, 16, 21, 15, 9, 8, 8, 8],
-                    "name": "vegetable farming",
-                    "type": "bar"
+                    "name": "vegetable farming"
                 },
                 {
                     "x": ["14:21", "14:22", "14:23", "14:24", "14:25", "14:26", "14:27", "14:28", "14:29"],
                     "y": [48, 68, 32, 20, 27, 38, 33, 46, 50],
-                    "name": "employment",
-                    "type": "bar"
+                    "name": "employment"
                 },
             ],
             "wordcloud": [
@@ -56,7 +52,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             ],
             "speakertime": [
                 {
-                    "type": "bar",
                     "x": [40, 23, 19, 21, 7, 6],
                     "y": ["Morrison", "Albanese", "Joyce", "Frydenberg", "Taylor", "Bandt"],
                     "marker": {
@@ -68,9 +63,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         "rgba(0,71,171,1)",
                         "rgba(16,194,91,1)"
                         ]
-                    },
-                    "orientation": "h"
                     }
+                }
             ],
             "databasename": os.environ["COSMOSDB_DATABASE"]
         }
