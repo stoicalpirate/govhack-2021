@@ -33,7 +33,7 @@
     },
     {
       "route": "/logout",
-      "redirect": "https://govhack2021smrt.b2clogin.com/govhack2021smrt.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/logout/post_logout_redirect=https://blue-meadow-0dcc57a10.azurestaticapps.net/.auth/logout"
+      "redirect": "https://govhack2021smrt.b2clogin.com/govhack2021smrt.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/logout/post_logout_redirect=https://agreeable-tree-017834410.azurestaticapps.net/.auth/logout"
     }
   ],
   "navigationFallback": {
