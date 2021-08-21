@@ -21,7 +21,7 @@
             </router-link>
           </b-nav-item>
 
-          <b-nav-item v-if="$store.state.loggedIn" class="mx-3">
+          <b-nav-item class="mx-3">
             <router-link to="/profile">
               <b-button variant="outline-secondary">Profile</b-button>
             </router-link>

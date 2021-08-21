@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h3>SpeakerTime</h3>
-    <h5>Politicians who've spoken the most today.</h5>
     <div ref="plot1"></div>
   </div>
 </template>

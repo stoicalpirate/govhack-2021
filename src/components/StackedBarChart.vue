@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h3>TopicFlow</h3>
-    <h5>Today's topics minute-by-minute.</h5>
     <div ref="plot1" style="overflow: auto"></div>
   </div>
 </template>

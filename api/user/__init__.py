@@ -14,14 +14,15 @@ database_name = os.environ["COSMOSDB_DATABASE"]
 def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # Read the auth header from frontend
-    auth_header = req.headers.get("x-ms-client-principal", None)
-    decoded = json.loads(base64.b64decode(auth_header).decode("utf-8"))
+    #auth_header = req.headers.get("x-ms-client-principal", None)
+    #decoded = json.loads(base64.b64decode(auth_header).decode("utf-8"))
 
     subpath = req.route_params.get("subpath")
 
     if subpath == "get-id":
 
-        body = json.dumps({"text": f"User ID is {decoded['userId']}"})
+        #body = json.dumps({"text": f"User ID is {decoded['userId']}"})
+        body = json.dumps({"text": f"User ID is ...]"})
 
     elif subpath == "upsert-user":
 
@@ -67,5 +68,28 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     del updated_item[k]
             logging.info(updated_item)
             body = json.dumps(updated_item)
-            
+
+    elif subpath == "topicdata":
+
+        db_object = {
+            "selected_topics": ["environment", "homelessness"],
+            "unselected_topics": ["covid", "domestic violence", "mental health"]
+        }
+        body = json.dumps(db_object)
+
+    elif subpath == "followtopic":
+
+        # Read the form data submitted from the frontend
+        data = dict(req.form)
+        
+        if len(data) == 0:
+            # Return an error response if there is no data
+            return func.HttpResponse("Form not found", status_code=400)
+        else:
+            topic = data["selected_topic"]
+
+        # TODO: update database...
+
+        body = json.dumps({"text": f"You are now following {topic}."})
+
     return func.HttpResponse(body=body)

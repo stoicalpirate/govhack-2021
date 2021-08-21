@@ -2,27 +2,35 @@
   <div>
     <Layout>
 
-      <h1>This is the Home page!</h1>
+      <div class="mb-5">
+        <h1>Welcome to PoliWatcher</h1>
+        <h4>Our mission is to make government more accessible.</h4>
+        <br>
+      </div>
+
+      <div class="my-4">
+        <h3>TopicFlow</h3>
+        <h5>Today's topics minute-by-minute.</h5>
+        <StackedBarChart v-if="chartDataReceived" :sourceData="topicflowData"/>
+        <Loading v-if="!chartDataReceived" />
+      </div>
+
+      <div class="my-4">
+        <h3>WordCloud</h3>
+        <h5>Most-used words in parliament today.</h5>
+        <WordCloud v-if="chartDataReceived" :sourceData="wordcloudData"/>
+        <Loading v-if="!chartDataReceived" />
+      </div>
+
+      <div class="my-4">
+        <h3>SpeakerTime</h3>
+        <h5>Politicians who've spoken the most today.</h5>
+        <HorizontalBarChart v-if="chartDataReceived" :sourceData="speakertimeData"/>
+        <Loading v-if="!chartDataReceived" />
+      </div>
+
       <br><br>
-
-      <StackedBarChart v-if="chartDataReceived" :sourceData="topicflowData"/>
-      <Loading v-if="!chartDataReceived" />
-
-      <br><br>
-
-      <WordCloud v-if="chartDataReceived" :sourceData="wordcloudData"/>
-      <Loading v-if="!chartDataReceived" />
-
-      <br><br>
-
-      <HorizontalBarChart v-if="chartDataReceived" :sourceData="speakertimeData"/>
-      <Loading v-if="!chartDataReceived" />
-
-      <br><br>
-
-
-      <br><br>
-
+      <!--
       <h3 class="mb-2">Ping the API to check that it's functional:</h3>
       <b-button variant="success" @click="basicApiCall" class="my-2">Ping API</b-button>
       <br>
@@ -95,7 +103,7 @@
       </b-row>
       <p>Updated database record: {{ dbUserRecord }}</p>
       <br><br>
-
+      -->
     </Layout>
   </div>
 </template>

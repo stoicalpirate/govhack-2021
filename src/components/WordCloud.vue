@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h3>WordCloud</h3>
-    <h5>Most-used words in parliament today.</h5>
     <vue-word-cloud
       style="height:480px;width:640px;"
       :words="sourceData"

@@ -2,30 +2,21 @@
   "routes": [
     {
       "route": "/profile",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": ["anonymous"]
     },
     {
       "route": "/admin/*",
       "allowedRoles": ["administrator"]
     },
     {
-      "route": "/api/message/*",
+      "route": "/api/*",
       "methods": ["GET", "POST"],
       "allowedRoles": ["anonymous"]
     },
     {
       "route": "/api/*",
-      "methods": ["GET", "POST"],
-      "allowedRoles": ["authenticated"]
-    },
-    {
-      "route": "/api/*",
       "methods": ["PUT", "PATCH", "DELETE"],
       "allowedRoles": ["administrator"]
-    },
-    {
-      "route": "/api/*",
-      "allowedRoles": ["authenticated"]
     },
     {
       "route": "/login",
