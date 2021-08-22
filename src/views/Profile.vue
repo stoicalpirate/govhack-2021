@@ -191,8 +191,17 @@ export default {
             "Content-Type": "multipart/form-data"
           },
         })
-        .then(() => {
+        .then((response) => {
           this.upsertNewtopicLoading = false
+          this.$bvToast.toast(response.data.text, {
+            toaster: 'b-toaster-top-center',
+            title: 'Success',
+            autoHideDelay: 3000,
+            variant: 'success',
+            solid: true,
+            noCloseButton: true,
+            isStatus: true,
+          })
           this.newtopic = ""
         })
         .catch((error) => {

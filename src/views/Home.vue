@@ -3,8 +3,9 @@
     <Layout>
 
       <div class="mb-5">
-        <h1>Welcome to PoliWatcher</h1>
-        <h4>Our mission is to make government more accessible.</h4>
+        <h1>Welcome to SMRT PIE</h1>
+        <h4>Smart Public Indexes of Engagement</h4>
+        <h5>Our mission is to make government more accessible.</h5>
         <br>
       </div>
 
@@ -48,7 +49,6 @@
       <br><br>
 
       <h3 class="mb-2">Check we can write to the database then read from the database:</h3>
-      <p>Database name is: {{ databaseName }}.</p>
       <b-row class="mb-3">
         <b-col>
           <b-form>
@@ -138,8 +138,7 @@ export default {
       chartDataReceived: false,
       topicflowData: {},
       wordcloudData: {},
-      speakertimeData: {},
-      databaseName: ""
+      speakertimeData: {}
     };
   },
   computed: {
@@ -227,7 +226,6 @@ export default {
           this.topicflowData = response.data.topicflow
           this.wordcloudData = response.data.wordcloud
           this.speakertimeData = response.data.speakertime
-          this.databaseName = response.data.databasename
           this.chartDataReceived = true
         })
         .catch((error) => {

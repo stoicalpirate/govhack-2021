@@ -16,69 +16,39 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # Read the auth header from frontend
     #auth_header = req.headers.get("x-ms-client-principal", None)
     #decoded = json.loads(base64.b64decode(auth_header).decode("utf-8"))
-    decoded = {  # TODO: delete after testing! Get from Azure AD B2C (above)
-        "identityProvider": "aadb2c",
-        "userId": "d75b260a64504067bfc5b2905e3b8182",
-        "userDetails": "username",
-        "userRoles": ["anonymous", "authenticated"]
-        }
+    decoded = {"userId": "d75b260a64504067bfc5b2905e3b8181"}  # TODO: dynamic
+
+    # Initialise the connection to Cosmos DB
+    client = CosmosClient(url, credential=key)
+    database = client.get_database_client(database_name)
+    container_name = "users"
+    container = database.get_container_client(container_name)
+    
+    # Fetch or create the user
+    try:
+        # Try to retrieve the user object
+        user = container.read_item(
+            item=decoded["userId"],
+            partition_key=decoded["userId"],
+            )
+    except CosmosHttpResponseError:
+        # Create a new user object
+        logging.info("User does not yet exist. Creating new user.")
+        user = {}
+        user["id"] = decoded["userId"]  # id = Azure AD B2C id
+        user["_uid"] = str(uuid.uuid4())  # prepend "_" internal use
+        user["userDetails"] = decoded["userDetails"]
+        user["_userRoles"] = decoded["userRoles"]  # internal use
+        container.upsert_item(user)
 
     subpath = req.route_params.get("subpath")
 
-    if subpath == "get-id":
+    if subpath == "topicdata":
 
-        #body = json.dumps({"text": f"User ID is {decoded['userId']}"})
-        body = json.dumps({"text": f"User ID is ...]"})
-
-    elif subpath == "upsert-user":
-
-        # Read the form data submitted from the frontend
-        data = dict(req.form)
-        
-        if len(data) == 0:
-            # Return an error response if there is no data
-            return func.HttpResponse("Form not found", status_code=400)
-        
-        else:
-            logging.info(decoded)
-            logging.info(data)
-
-            # Initialise the connection to Cosmos DB
-            client = CosmosClient(url, credential=key)
-            database = client.get_database_client(database_name)
-            container_name = "items"
-            container = database.get_container_client(container_name)
-            
-            try:
-                # Try to retrieve the user object
-                item = container.read_item(
-                    item=decoded["userId"],
-                    partition_key=decoded["userId"],
-                    )
-            except CosmosHttpResponseError:
-                # Create a new user object
-                logging.info("User does not yet exist. Creating new user.")
-                item = {}
-                item["id"] = decoded["userId"]  # id = Azure AD B2C id
-                item["_uid"] = str(uuid.uuid4())  # prepend "_" internal use
-                item["userDetails"] = decoded["userDetails"]
-                item["_userRoles"] = decoded["userRoles"]  # internal use
-            
-            # Upsert the new or revised object, overwriting any existing object
-            item[data["key_data"]] = data["value_data"]  # New data
-            updated_item = container.upsert_item(item)
-
-            # Remove sensitive data then return the item to the frontend
-            for k, v in list(updated_item.items()):
-                if k.startswith("_"):
-                    del updated_item[k]
-            logging.info(updated_item)
-            body = json.dumps(updated_item)
-
-    elif subpath == "topicdata":
+        # Fetch this user's topic data to display on their profile page
 
         # 1. Pull JSON object from db
-        """
+
         # Initialise the connection to Cosmos DB
         client = CosmosClient(url, credential=key)
         database = client.get_database_client(database_name)
@@ -86,12 +56,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         container = database.get_container_client(container_name)
 
         try:
-            items = container.query_items(
-                query="SELECT * FROM topics WHERE ARRAY_CONTAINS(['environment', 'homelessness'], )",
-                #parameters=[dict(name="@usertopics", value="['environment', 'homelessness']")],
-            )
-            for item in items:
-                i = (json.dumps(item, indent=True))
+            for item in container.query_items(
+                    query="SELECT * FROM topics c WHERE ARRAY_CONTAINS(@usertopics, c.name)",
+                    parameters=[dict(
+                        name="@usertopics",
+                        value="['environment', 'homelessness']"
+                        #value=json.dumps(user["topics"])
+                    )],
+                    enable_cross_partition_query=True):
+                db_object = item
+                print(json.dumps(db_object, indent=True))
+
+
+            #items = container.query_items(
+            #    query="SELECT * FROM topics WHERE ARRAY_CONTAINS(['environment', 'homelessness'], )",
+            #    #parameters=[dict(name="@usertopics", value="['environment', 'homelessness']")],
+            #)
+            #for item in items:
+            #    i = (json.dumps(item, indent=True))
 
             # Try to retrieve the user object
             #item = container.read_item(
@@ -101,7 +83,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         except CosmosHttpResponseError:
             # Return an error response if the user cannot be found
             return func.HttpResponse("Data not found", status_code=400)
-        """
+
         # 2. Make API calls to enrich the data
 
         # 3. Send to frontend
@@ -192,7 +174,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             topic = data["selected_topic"]
 
-        # TODO: update database...
+        # Update the database to show user is now following the topic
+        user["topics"].append(topic)
+        container.upsert_item(user)
 
         body = json.dumps({"text": f"You are now following {topic}."})
 
@@ -207,26 +191,31 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             new_topic = data["new_topic"]
 
-        # Initialise the connection to Cosmos DB
-        client = CosmosClient(url, credential=key)
-        database = client.get_database_client(database_name)
+        # Get the CosmosDB container
         container_name = "topics"
         container = database.get_container_client(container_name)
-
-        # Insert into the database if it doesn't already exist
+        already_exists = False
         try:
-            # Try to retrieve the user object
-            item = container.read_item(
-                item=new_topic,
-                partition_key=new_topic,
-                )
-            logging.info("Item already exists")
+            # Search the container to see if the topic already exists
+            for item in container.query_items(
+                    query="SELECT * FROM topics c WHERE c.name=@topic",
+                    parameters=[dict(
+                        name="@topic",
+                        value=new_topic
+                    )],
+                    enable_cross_partition_query=True):
+                if item["name"] == new_topic:
+                    already_exists = True
+                    logging.info("Item already exists")
         except CosmosHttpResponseError:
-            # Create a new user object
+            return func.HttpResponse("Form not found", status_code=400)
+        
+        if not already_exists:
+            # Create a new topic object if it doesn't already exist
             logging.info("Topic does not yet exist. Creating new topic.")
             item = {}
-            item["name"] = new_topic  # id = Azure AD B2C id
-            updated_item = container.upsert_item(item)
+            item["name"] = new_topic
+            container.upsert_item(item)
 
         body = json.dumps({"text": (
             f"Thank you for suggesting {new_topic} as a new topic.")
