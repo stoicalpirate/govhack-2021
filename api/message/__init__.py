@@ -11,20 +11,24 @@ key = os.environ["COSMOSDB_KEY"]
 database_name = os.environ["COSMOSDB_DATABASE"]
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Python HTTP trigger function processed a request.")
+    """
+    This is an open API that any visitor to the website can access.
+    It sends daily snapshot data to the home page to generate charts and
+    graphics.
+    """
 
     subpath = req.route_params.get("subpath")
 
     if subpath == "chartdata":
 
-        # Initialise the connection to Cosmos DB
-        client = CosmosClient(url, credential=key)
-        database = client.get_database_client(database_name)
-        container_name = "dailydata"
-        container = database.get_container_client(container_name)
-        
-        # Fetch today's data from the database
         try:
+            
+            # Initialise the connection to Cosmos DB
+            client = CosmosClient(url, credential=key)
+            database = client.get_database_client(database_name)
+            container_name = "dailydata"
+            container = database.get_container_client(container_name)
+            
             # Search using a string of today's date retrieving 1 item only
             for item in container.query_items(
                     query="SELECT * FROM dailydata c WHERE c.yyyymmdd=@today",
@@ -36,7 +40,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     max_item_count=1):
                 db_object = item
         
-        except CosmosHttpResponseError:
+        except:  # TODO: change this to a more granular error later
 
             # DEMO ONLY: return demo data (as db may not contain today's data)
             db_object = {
